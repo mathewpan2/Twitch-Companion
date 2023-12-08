@@ -19,6 +19,6 @@
 .env.test.local
 .env.production.local
 .history
-
+todo.txt
 # secrets
 secrets.*.js

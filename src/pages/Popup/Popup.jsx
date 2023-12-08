@@ -1,24 +1,33 @@
 import React from 'react';
-import logo from '../../assets/img/logo.svg';
-import Greetings from '../../containers/Greetings/Greetings';
+import TwitchStreams from '../../components/twitchChannels/TwitchStreams'
+import '../../styles/styles.css'
+
+const mockData = [
+  {
+    channelIcon: 'https://picsum.photos/200/200?random',
+    channelName: 'GamerGuy',
+    viewerCount: 1000,
+    timeLive: '2 hours ago',
+  },
+  {
+    channelIcon: 'https://picsum.photos/200/200?random',
+    channelName: 'Loser',
+    viewerCount: 500,
+    timeLive: '1 hour ago',
+  },
+  {
+    channelIcon: 'https://picsum.photos/200/200?random',
+    channelName: 'forsen',
+    viewerCount: 2000,
+    timeLive: '30 minutes ago',
+  },
+  // Add more entries as needed
+];
 
 const Popup = () => {
   return (
-    <div class="">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/pages/Popup/Popup.jsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React or not!
-        </a>
-      </header>
+    <div className="min-w-[300px] max-w-[600px] mx-auto p-2">
+      <TwitchStreams streams={mockData} />
     </div>
   );
 };
