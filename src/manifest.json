@@ -3,6 +3,13 @@
   "name": "Twitch Companion",
   "description": "Track your live channels and browse twitch remotely",
   "options_page": "options.html",
+  "permissions": [
+    "identity",
+    "notifications",
+    "alarms",
+    "storage",
+    "idle"
+  ],
   "background": {
     "service_worker": "background.bundle.js"
   },

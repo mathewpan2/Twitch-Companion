@@ -1,6 +1,9 @@
 import { v4 as uuidv4 } from "uuid";
 import { launchWebAuthFlow } from "../chrome/identity";
 import secrets from 'secrets';
+import { axiosInteceptor } from "../axios/axiosInterceptors";
+import axios from "axios";
+
 
 const getAuthURL = (securityToken, promptVerify = false) => {
     let redirectUrl = chrome.identity.getRedirectURL();
@@ -8,34 +11,61 @@ const getAuthURL = (securityToken, promptVerify = false) => {
         redirectUrl = redirectUrl.slice(0, -1);
     }
 
-    return `${secrets.OAUTH_BASE_URL}/authorize?client_id=${secrets.CLIENT_ID}&redirect_uri=${secrets.redirectUrl}&response_type=${secrets.RESPONSE_TYPE_TOKEN}&force_verify=${promptVerify}&state=${securityToken}&scope=${secrets.SCOPES.join(
+    return `${secrets.OAUTH_BASE_URL}/authorize?client_id=${secrets.CLIENT_ID}&redirect_uri=${redirectUrl}&response_type=${secrets.RESPONSE_TYPE_TOKEN}&force_verify=${promptVerify}&state=${securityToken}&scope=${secrets.SCOPES.join(
         "%20",
     )}`;
 };
 
-export const sendTokenRequest = (prompVerify = false) => {
-    return new Promise((resolve, reject) => {
-        const securityToken = uuidv4();
+export const sendTokenRequest = async (prompVerify = true) => {
 
-        const responseUrl = launchWebAuthFlow(
-            getAuthURL(securityToken, prompVerify),
-            prompVerify,
-        );
+    const securityToken = uuidv4();
 
-        const url = new URL(responseUrl);
-        const queryParams = new URLSearchParams(url.hash.substring(1));
+    const responseUrl = await launchWebAuthFlow(
+        getAuthURL(securityToken, prompVerify),
+        prompVerify,
+    );
 
-        const token = queryParams.get("access_token");
-        const state = queryParams.get("state");
 
-        if (!token) {
-            reject(Error("Error getting token from twitch API"));
-        }
+    console.log(responseUrl);
+    const url = new URL(responseUrl);
+    const queryParams = new URLSearchParams(url.hash.substring(1));
 
-        if (state != securityToken) {
-            reject(Error("The token wasn't requested by this extension"));
-        }
+    const token = queryParams.get("access_token");
+    const state = queryParams.get("state");
 
-        resolve(token);
-    });
+    if (!token) {
+        throw new (Error("Error getting token from twitch API"));
+    }
+
+    if (state != securityToken) {
+        throw new (Error("The token wasn't requested by this extension"));
+    }
+
+    return token;
+}
+
+export const validateToken = async () => {
+
+    try {
+        const response = await axiosInteceptor(axios.create()).get(`${secrets.OAUTH_BASE_URL}/validate`)
+
+        return response.data.user_id;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+
+    // try {
+    //     const response = await axios.get(`${secrets.OAUTH_BASE_URL}/validate`,
+    //         {
+    //             headers: {
+    //                 'Authorization': 'OAuth 9c90f5agbwr6c9cneux79xb20wn7g4'
+    //             }
+    //         });
+
+    //     return response.data.user_id;
+    // } catch (error) {
+    //     console.error(error);
+    //     throw error;
+    // }
 }

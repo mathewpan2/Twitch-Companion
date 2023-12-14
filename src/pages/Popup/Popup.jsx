@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import TwitchStreams from '../../components/twitchChannels/TwitchStreams'
+import { getFollowedStreams, getUser } from '../../infrastructure/twitch/twitchService';
 import '../../styles/styles.css'
-
+import { removeTokenFromStorage } from '../../infrastructure/chrome/localStorage';
 const mockData = [
   {
     channelIcon: 'https://picsum.photos/200/200?random',
@@ -25,9 +26,27 @@ const mockData = [
 ];
 
 const Popup = () => {
+  const [streamData, setStreamData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const userId = await getUser();
+        console.log(userId)
+        const data = await getFollowedStreams(userId);
+        setStreamData(data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchData();  // Call the async function
+  }, []);
+
+
+
   return (
     <div className="min-w-[300px] max-w-[600px] mx-auto p-2">
-      <TwitchStreams streams={mockData} />
+      <TwitchStreams streams={streamData} />
     </div>
   );
 };
