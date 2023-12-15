@@ -1,5 +1,6 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getUser, getFollowedStreams } from "../infrastructure/twitch/twitchService";
+
 
 const initialState = {
     loading: false,
@@ -10,32 +11,38 @@ const initialState = {
     cursor: '',
 };
 
+export const fetchFollowedStreams = createAsyncThunk('twitch/fetchFollowedStreams', async () => {
+    const userId = await getUser();
+    const liveStreams = await getFollowedStreams(userId);
+    return liveStreams;
+})
+
+
 export const twitchSlice = createSlice({
-    name: 'followedStreams',
+    name: 'twitch',
     initialState,
     reducers: {
-        setLoading: async (state) => {
-            state.loading = !state.loading;
-        },
-        setLoadingMore: (state) => {
-            state.loadingMore = !state.loadingMore;
-        },
-        setLoadingMoreFinished: (state) => {
-            state.loadingMoreFinished = !state.loadingMoreFinished;
-        },
         setCursor: (state) => {
 
         },
         getLiveStreams: (state) => {
 
         },
+    },
+    extraReducers(builder) {
+        builder
+            .addCase(fetchFollowedStreams.pending, (state, action) => {
+                state.loading = true;
+            })
+            .addCase(fetchFollowedStreams.fulfilled, (state, action) => {
+                state.loading = false;
+                state.liveStreams = action.payload;
+            })
     }
 });
 
 export const {
-    setLoading,
-    setLoadingMore,
-    setLoadingMoreFinished,
+    setCursor,
     getLiveStreams,
 } = twitchSlice.actions;
 

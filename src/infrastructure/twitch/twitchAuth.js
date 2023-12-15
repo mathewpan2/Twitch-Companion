@@ -5,6 +5,16 @@ import { axiosInteceptor } from "../axios/axiosInterceptors";
 import axios from "axios";
 
 
+let twitchAuthInstance;
+
+const getTwitchAuthInstance = () => {
+    if (!twitchAuthInstance) {
+        twitchAuthInstance = axiosInteceptor(axios.create());
+    }
+    return twitchAuthInstance;
+}
+
+
 const getAuthURL = (securityToken, promptVerify = false) => {
     let redirectUrl = chrome.identity.getRedirectURL();
     if (redirectUrl.slice(-1) === "/") {
@@ -47,7 +57,7 @@ export const sendTokenRequest = async (prompVerify = true) => {
 export const validateToken = async () => {
 
     try {
-        const response = await axiosInteceptor(axios.create()).get(`${secrets.OAUTH_BASE_URL}/validate`)
+        const response = await getTwitchAuthInstance().get(`${secrets.OAUTH_BASE_URL}/validate`)
 
         return response.data.user_id;
     } catch (error) {

@@ -4,7 +4,6 @@ import { getTwitchFollowedStreams, getTwitchUser } from "./twitchRepository";
 
 
 export const getToken = async () => {
-
     try {
         const tokenStorage = await getTokenFromStorage();
         if (Object.keys(tokenStorage).length === 0) {
@@ -37,7 +36,9 @@ export const getUserById = async ([userId]) => {
 
 export const getFollowedStreams = async (userId, cursor, first) => {
     const streams = await getTwitchFollowedStreams(userId, cursor, first);
-
+    if (!streams.pagination) {
+        const after = streams.pagination.cursor;
+    }
 
     const streamerInfo = streams.data.map(stream => ({
         channelName: stream.user_name,

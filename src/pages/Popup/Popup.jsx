@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import TwitchStreams from '../../components/twitchChannels/TwitchStreams'
 import { getFollowedStreams, getUser } from '../../infrastructure/twitch/twitchService';
+import { fetchFollowedStreams } from '../../slices/twitchSlice';
 import '../../styles/styles.css'
-import { removeTokenFromStorage } from '../../infrastructure/chrome/localStorage';
+import { useDispatch, useSelector } from 'react-redux';
+
+
 const mockData = [
   {
     channelIcon: 'https://picsum.photos/200/200?random',
@@ -26,23 +29,26 @@ const mockData = [
 ];
 
 const Popup = () => {
-  const [streamData, setStreamData] = useState([]);
+  const dispatch = useDispatch();
+  // const [streamData, setStreamData] = useState([]);
+  const streamData = useSelector((state) => state.twitch.liveStreams);
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const userId = await getUser();
+  //       const data = await getFollowedStreams(userId);
+  //       setStreamData(data);
+  //     } catch (error) {
+  //       console.error('Error fetching data:', error);
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const userId = await getUser();
-        console.log(userId)
-        const data = await getFollowedStreams(userId);
-        setStreamData(data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-    fetchData();  // Call the async function
+    dispatch(fetchFollowedStreams());
   }, []);
-
-
 
   return (
     <div className="min-w-[300px] max-w-[600px] mx-auto p-2">

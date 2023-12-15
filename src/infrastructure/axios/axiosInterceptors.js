@@ -13,13 +13,15 @@ export const axiosInteceptor = (axios) => {
 
         (error) => Promise.reject("Error getting Token", error)
     );
-    // axios.interceptors.response.use(async (error) => {
-    //     if (error.status === 401) {
-    //         const token = await refreshToken();
-    //         return axios(error.config);
-    //     }
-    //     return Promise.reject(error);
-    // });
+    axios.interceptors.response.use(async response => response,
+        async error => {
+            const status = error.response ? error.response.status : null;
+            if (status === 401) {
+                const token = await refreshToken();
+                return axios(error.config);
+            }
+            return Promise.reject(error);
+        });
 
     return axios
 }

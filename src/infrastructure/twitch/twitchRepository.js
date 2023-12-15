@@ -2,16 +2,19 @@ import axios from "axios"
 import { axiosInteceptor } from "../axios/axiosInterceptors"
 import secrets from 'secrets';
 
-// let twitchInstance;
+let twitchApiInstance;
 
-
-// const getTwitchInstance = () => {
-//     if (!twitchInstance) {
-//         twitchInstance = axiosInteceptor(axios.create());
-//     }
-//     return twitchInstance;
-// }
-
+const getTwitchApiInstace = () => {
+    if (!twitchApiInstance) {
+        twitchApiInstance = axiosInteceptor(axios.create({
+            headers: {
+                ...({ "Client-Id": secrets.CLIENT_ID }),
+            },
+        }
+        ));
+    }
+    return twitchApiInstance;
+}
 
 export const getTwitchFollowedStreams = async (userId, after = "", first = 20) => {
     const url = new URL(`${secrets.API_BASE_URL}/streams/followed?user_id=${userId}`);
@@ -21,25 +24,17 @@ export const getTwitchFollowedStreams = async (userId, after = "", first = 20) =
     }
 
     try {
-        const response = await axiosInteceptor(axios.create({
-            headers: {
-                ...({ "Client-Id": secrets.CLIENT_ID }),
-            },
-        }
-        )).get(url.href)
+        const response = await getTwitchApiInstace().get(url.href)
 
         return response.data;
     } catch (error) {
         console.error(error);
         throw error;
     }
-
-
-
 };
 
 export const getTwitchUser = async (ids, login) => {
-    await axiosInteceptor(axios.create()).get(`${secrets.API_BASE_URL}/users?
+    await getTwitchApiInstace().get(`${secrets.API_BASE_URL}/users?
     ${ids.map((id) => `&id=${id}`).join("")}
     ${login.map((login) => `&login=${login}`).join("")}`)
 
