@@ -55,14 +55,7 @@ export const getFollowedStreams = async (userId, cursor, first) => {
 
     const channelIds = temp.data.map(stream => stream.user_id);
     const profilePics = await getChannelProfilePics(channelIds);
-    // while (after) {
-    //     const extra = await getTwitchFollowedStreams(userId, after, first);
-    //     streams.data.push(...extra.data)
 
-    //     if (extra.pagination) {
-    //         after = extra.pagination.cursor;
-    //     }
-    // }
     let num = 0
     const liveStreams = streams.data.map(stream => ({
         channelName: stream.user_name,

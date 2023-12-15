@@ -13,7 +13,7 @@ const initialState = {
 
 export const fetchFollowedStreams = createAsyncThunk('twitch/fetchFollowedStreams', async (cursor) => {
     const userId = await getUser();
-    const { liveStreams, after } = await getFollowedStreams(userId, cursor, 3);
+    const { liveStreams, after } = await getFollowedStreams(userId, cursor, 20);
 
     return { liveStreams, after };
 })

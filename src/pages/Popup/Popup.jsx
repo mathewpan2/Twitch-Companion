@@ -5,7 +5,6 @@ import { fetchFollowedStreams } from '../../slices/twitchSlice';
 import '../../styles/styles.css'
 import { useDispatch, useSelector } from 'react-redux';
 
-
 const Popup = () => {
   const dispatch = useDispatch();
 
@@ -17,7 +16,8 @@ const Popup = () => {
   }, [cursor]);
 
   return (
-    <div className="min-w-[300px] max-w-[600px] mx-auto p-2">
+
+    <div className="min-w-[330px] max-w-[600px] mx-auto p-2 scrollbar-hide bg-gray-200">
       <TwitchStreams streams={streamData} />
     </div>
   );
