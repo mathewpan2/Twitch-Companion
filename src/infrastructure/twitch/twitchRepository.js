@@ -33,12 +33,12 @@ export const getTwitchFollowedStreams = async (userId, after = "", first = 20) =
     }
 };
 
-export const getTwitchUsers = async (ids) => {
+export const getTwitchUser = async (id) => {
 
     try {
 
         const response = await getTwitchApiInstace().get(
-            `${secrets.API_BASE_URL}/users?${ids.map((id) => `id=${id}`).join("&")}`
+            `${secrets.API_BASE_URL}/users?id=${id}`
         );
 
 
