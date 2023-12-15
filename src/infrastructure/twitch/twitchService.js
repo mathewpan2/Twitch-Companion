@@ -1,6 +1,6 @@
 import { sendTokenRequest, validateToken } from "./twitchAuth";
 import { getTokenFromStorage, storeTokeninStorage } from "../chrome/localStorage";
-import { getTwitchFollowedStreams, getTwitchUser } from "./twitchRepository";
+import { getTwitchFollowedStreams, getTwitchUsers } from "./twitchRepository";
 
 
 export const getToken = async () => {
@@ -28,10 +28,11 @@ export const getUser = async () => {
     return await validateToken();
 }
 
-export const getUserById = async ([userId]) => {
-    const response = await getTwitchUser(userId);
-    return response.data[0];
+export const getChannelProfilePics = async (userIds) => {
+    const response = await getTwitchUsers(userIds);
+    const profilePics = response.data.map(channel => channel.profile_image_url);
 
+    return profilePics;
 }
 
 export const getFollowedStreams = async (userId, cursor, first) => {
@@ -48,7 +49,8 @@ export const getFollowedStreams = async (userId, cursor, first) => {
         after = temp.pagination.cursor;
     }
 
-    console.log(after)
+    const channelIds = temp.data.map(stream => stream.user_id);
+    const profilePics = await getChannelProfilePics(channelIds);
 
     // while (after) {
     //     const extra = await getTwitchFollowedStreams(userId, after, first);
@@ -58,14 +60,15 @@ export const getFollowedStreams = async (userId, cursor, first) => {
     //         after = extra.pagination.cursor;
     //     }
     // }
-
+    let num = 0
     const liveStreams = streams.data.map(stream => ({
         channelName: stream.user_name,
         gameName: stream.game_name,
         viewerCount: stream.viewer_count,
         timeLive: stream.started_at,
+        channelIcon: profilePics[num++],
     }));
-
+    console.log(liveStreams)
     return { liveStreams, after };
 }
 

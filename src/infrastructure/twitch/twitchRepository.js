@@ -33,17 +33,23 @@ export const getTwitchFollowedStreams = async (userId, after = "", first = 20) =
     }
 };
 
-export const getTwitchUser = async (ids, login) => {
-    await getTwitchApiInstace().get(`${secrets.API_BASE_URL}/users?
-    ${ids.map((id) => `&id=${id}`).join("")}
-    ${login.map((login) => `&login=${login}`).join("")}`)
+export const getTwitchUsers = async (ids) => {
 
-        .then(response => {
-            return response.data;
-        })
-        .catch(e => {
-            console.error("Error getting users", e);
-        })
+    try {
+
+        const response = await getTwitchApiInstace().get(
+            `${secrets.API_BASE_URL}/users?${ids.map((id) => `id=${id}`).join("&")}`
+        );
+
+
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+
+    // ${login.map((login) => `&login=${login}`).join("")}
+
 }
 
 
