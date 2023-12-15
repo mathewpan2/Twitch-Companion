@@ -35,19 +35,37 @@ export const getUserById = async ([userId]) => {
 }
 
 export const getFollowedStreams = async (userId, cursor, first) => {
-    const streams = await getTwitchFollowedStreams(userId, cursor, first);
-    if (!streams.pagination) {
-        const after = streams.pagination.cursor;
+
+    const streams = {
+        data: [],
+    }
+    const temp = await getTwitchFollowedStreams(userId, cursor, first);
+    streams.data.push(...temp.data)
+
+    let after = '';
+
+    if (temp.pagination) {
+        after = temp.pagination.cursor;
     }
 
-    const streamerInfo = streams.data.map(stream => ({
+    console.log(after)
+
+    // while (after) {
+    //     const extra = await getTwitchFollowedStreams(userId, after, first);
+    //     streams.data.push(...extra.data)
+
+    //     if (extra.pagination) {
+    //         after = extra.pagination.cursor;
+    //     }
+    // }
+
+    const liveStreams = streams.data.map(stream => ({
         channelName: stream.user_name,
         gameName: stream.game_name,
         viewerCount: stream.viewer_count,
         timeLive: stream.started_at,
     }));
 
-    return streamerInfo;
-
+    return { liveStreams, after };
 }
 

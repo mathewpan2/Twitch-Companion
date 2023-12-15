@@ -11,10 +11,11 @@ const initialState = {
     cursor: '',
 };
 
-export const fetchFollowedStreams = createAsyncThunk('twitch/fetchFollowedStreams', async () => {
+export const fetchFollowedStreams = createAsyncThunk('twitch/fetchFollowedStreams', async (cursor) => {
     const userId = await getUser();
-    const liveStreams = await getFollowedStreams(userId);
-    return liveStreams;
+    const { liveStreams, after } = await getFollowedStreams(userId, cursor, 3);
+
+    return { liveStreams, after };
 })
 
 
@@ -36,7 +37,10 @@ export const twitchSlice = createSlice({
             })
             .addCase(fetchFollowedStreams.fulfilled, (state, action) => {
                 state.loading = false;
-                state.liveStreams = action.payload;
+                state.liveStreams = state.liveStreams.concat(action.payload.liveStreams);
+                if (action.payload.after) {
+                    state.cursor = action.payload.after;
+                }
             })
     }
 });
