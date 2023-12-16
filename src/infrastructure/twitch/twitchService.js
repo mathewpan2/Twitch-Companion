@@ -6,7 +6,7 @@ import { getTwitchFollowedStreams, getTwitchUser } from "./twitchRepository";
 export const getToken = async () => {
     try {
         const tokenStorage = await getTokenFromStorage();
-        if (Object.keys(tokenStorage).length === 0) {
+        if (!tokenStorage) {
             const token = await sendTokenRequest();
             await storeTokeninStorage(token);
             return token;
