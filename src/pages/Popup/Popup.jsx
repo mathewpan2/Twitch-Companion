@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import TwitchStreams from '../../components/twitchChannels/TwitchStreams'
-import { getFollowedStreams, getUser } from '../../infrastructure/twitch/twitchService';
+import TwitchStreams from '../../components/twitchChannels';
 import { fetchFollowedStreams } from '../../slices/twitchSlice';
 import '../../styles/styles.css'
 import { useDispatch, useSelector } from 'react-redux';
