@@ -27,9 +27,9 @@ export const TwitchStreamItem = ({ stream }) => {
             </div>
             <div className="shrink-0 sm:flex sm:flex-col sm:items-end">
                 <p className="leading-6 text-gray-900">{stream.viewerCount} viewers</p>
-                <div class="mt-1 flex items-center gap-x-1.5">
-                    <div class="flex-none rounded-full bg-red-500/20 p-1">
-                        <div class="h-1.5 w-1.5 rounded-full bg-red-500"></div>
+                <div className="mt-1 flex items-center gap-x-1.5">
+                    <div className="flex-none rounded-full bg-red-500/20 p-1">
+                        <div className="h-1.5 w-1.5 rounded-full bg-red-500"></div>
                     </div>
                     <p className="leading-5 text-gray-500">{timeLive}</p>
                 </div>
